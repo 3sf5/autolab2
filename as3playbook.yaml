@@ -1,0 +1,33 @@
+---
+- name: AS3 BIG-IP Declaration
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  vars:
+   uri_method: "POST"
+
+  vars_files:
+    - ../creds/big-ip_creds.yaml
+
+  tasks:
+  - name: Deploy AS3 to Big-IP
+    uri:
+     url: https://51.142.10.142:8443/mgmt/shared/appsvcs/declare
+     user: "{{bigip_user}}"
+     password: "{{bigip_pass}}"
+     method: POST
+     body: "{{ lookup('file','./as3.json') }}"
+     force_basic_auth: true
+     status_code: 200
+     body_format: json
+     validate_certs: false
+    register: as3_output
+
+  - name: DEBUG OUTPUT
+    debug:
+        msg: "result of output {{as3_output}}" 
+
+
+
+...
